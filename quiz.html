@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Quiz</title>
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; background: #f4f6f8; }
+    h1 { background: #1f2937; color: white; margin: 0; padding: 15px; text-align: center; }
+    .box { max-width: 600px; margin: 25px auto; padding: 0 15px; }
+    .question { background: white; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,.2); }
+    .question label { display: block; margin: 6px 0; cursor: pointer; }
+    button { background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-size: 16px; cursor: pointer; }
+    #result { background: white; padding: 15px; border-radius: 8px; margin-top: 20px; display: none; }
+    .correct { color: green; }
+    .wrong { color: #dc2626; }
+  </style>
+</head>
+<body>
+
+  <h1>Online Quiz</h1>
+
+  <div class="box">
+    <div id="quiz"></div>
+    <button onclick="submitQuiz()">Submit</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    // Questions: text, options and the index of the correct option
+    var questions = [
+      { q: "Which language runs in the web browser?",
+        options: ["Java", "Python", "JavaScript", "C"], answer: 2 },
+      { q: "What does HTML stand for?",
+        options: ["Hyper Text Markup Language", "High Text Machine Language", "Hyper Tool Multi Language", "Home Text Markup Language"], answer: 0 },
+      { q: "Which tag is used to create a hyperlink?",
+        options: ["<img>", "<a>", "<p>", "<div>"], answer: 1 },
+      { q: "Which CSS property changes the text colour?",
+        options: ["font-style", "background", "color", "text-size"], answer: 2 },
+      { q: "Which method adds an item to the end of an array?",
+        options: ["pop()", "push()", "shift()", "splice()"], answer: 1 }
+    ];
+
+    // Show all questions with radio buttons
+    var html = "";
+    for (var i = 0; i < questions.length; i++) {
+      html += '<div class="question"><b>' + (i + 1) + ". " + questions[i].q.replace(/</g, "&lt;") + "</b>";
+      for (var j = 0; j < questions[i].options.length; j++) {
+        html += '<label><input type="radio" name="q' + i + '" value="' + j + '"> ' +
+                questions[i].options[j].replace(/</g, "&lt;") + "</label>";
+      }
+      html += "</div>";
+    }
+    document.getElementById("quiz").innerHTML = html;
+
+    // Calculate the score and show the summary
+    function submitQuiz() {
+      var score = 0;
+      var summary = "";
+
+      for (var i = 0; i < questions.length; i++) {
+        var chosen = document.querySelector('input[name="q' + i + '"]:checked');
+        var correctText = questions[i].options[questions[i].answer].replace(/</g, "&lt;");
+
+        if (chosen && Number(chosen.value) === questions[i].answer) {
+          score++;
+          summary += '<p class="correct">Q' + (i + 1) + ": Correct</p>";
+        } else if (chosen) {
+          summary += '<p class="wrong">Q' + (i + 1) + ": Wrong (Correct answer: " + correctText + ")</p>";
+        } else {
+          summary += '<p class="wrong">Q' + (i + 1) + ": Not answered (Correct answer: " + correctText + ")</p>";
+        }
+      }
+
+      var result = document.getElementById("result");
+      result.style.display = "block";
+      result.innerHTML = "<h2>Your Score: " + score + " / " + questions.length + "</h2>" +
+                         "<p>Correct: " + score + " | Incorrect: " + (questions.length - score) + "</p>" + summary;
+    }
+  </script>
+
+</body>
+</html>

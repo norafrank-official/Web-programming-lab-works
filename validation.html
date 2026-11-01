@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Validation</title>
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; background: #f4f6f8; }
+    h1 { background: #1f2937; color: white; margin: 0; padding: 15px; text-align: center; }
+    .wrap { display: flex; flex-wrap: wrap; gap: 25px; justify-content: center; padding: 25px; }
+    form { background: white; width: 280px; padding: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,.2); }
+    label { display: block; margin-top: 12px; font-size: 14px; }
+    input { width: 100%; padding: 8px; margin-top: 4px; box-sizing: border-box; border: 1px solid #aaa; border-radius: 4px; }
+    .error { color: #dc2626; font-size: 13px; min-height: 16px; }
+    .ok { border-color: green; }
+    .bad { border-color: #dc2626; }
+    button { width: 100%; margin-top: 15px; padding: 9px; background: #2563eb; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    .success { color: green; text-align: center; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+  <h1>Registration &amp; Login</h1>
+
+  <div class="wrap">
+
+    <!-- Registration form -->
+    <form id="regForm" novalidate>
+      <h2>Register</h2>
+      <label>Name</label>
+      <input type="text" id="regName">
+      <div class="error" id="regNameErr"></div>
+
+      <label>Email</label>
+      <input type="text" id="regEmail">
+      <div class="error" id="regEmailErr"></div>
+
+      <label>Password</label>
+      <input type="password" id="regPass">
+      <div class="error" id="regPassErr"></div>
+
+      <label>Confirm Password</label>
+      <input type="password" id="regConfirm">
+      <div class="error" id="regConfirmErr"></div>
+
+      <button type="submit">Register</button>
+      <div class="success" id="regMsg"></div>
+    </form>
+
+    <!-- Login form -->
+    <form id="loginForm" novalidate>
+      <h2>Login</h2>
+      <label>Email</label>
+      <input type="text" id="logEmail">
+      <div class="error" id="logEmailErr"></div>
+
+      <label>Password</label>
+      <input type="password" id="logPass">
+      <div class="error" id="logPassErr"></div>
+
+      <button type="submit">Login</button>
+      <div class="success" id="logMsg"></div>
+    </form>
+
+  </div>
+
+  <script>
+    // Show an error message (or clear it) for one field
+    function setError(inputId, message) {
+      var input = document.getElementById(inputId);
+      document.getElementById(inputId + "Err").innerText = message;
+      input.className = (message === "") ? "ok" : "bad";
+      return message === "";     // true if the field is valid
+    }
+
+    // ---- Validation rules ----
+    function checkName() {
+      var v = document.getElementById("regName").value.trim();
+      return setError("regName", v === "" ? "Name is required." : "");
+    }
+
+    function checkEmail(id) {
+      var v = document.getElementById(id).value.trim();
+      var pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;      // something@something.something
+      if (v === "") return setError(id, "Email is required.");
+      if (!pattern.test(v)) return setError(id, "Enter a valid email (e.g. name@mail.com).");
+      return setError(id, "");
+    }
+
+    function checkPassword() {
+      var v = document.getElementById("regPass").value;
+      if (v === "") return setError("regPass", "Password is required.");
+      if (v.length < 8) return setError("regPass", "Password must be at least 8 characters.");
+      if (!/[A-Z]/.test(v)) return setError("regPass", "Add at least one uppercase letter.");
+      if (!/[0-9]/.test(v)) return setError("regPass", "Add at least one number.");
+      return setError("regPass", "");
+    }
+
+    function checkConfirm() {
+      var p = document.getElementById("regPass").value;
+      var c = document.getElementById("regConfirm").value;
+      if (c === "") return setError("regConfirm", "Please confirm your password.");
+      if (p !== c) return setError("regConfirm", "Passwords do not match.");
+      return setError("regConfirm", "");
+    }
+
+    function checkLoginPass() {
+      var v = document.getElementById("logPass").value;
+      return setError("logPass", v === "" ? "Password is required." : "");
+    }
+
+    // ---- Dynamic checking while the user types ----
+    document.getElementById("regName").addEventListener("input", checkName);
+    document.getElementById("regEmail").addEventListener("input", function () { checkEmail("regEmail"); });
+    document.getElementById("regPass").addEventListener("input", checkPassword);
+    document.getElementById("regConfirm").addEventListener("input", checkConfirm);
+    document.getElementById("logEmail").addEventListener("input", function () { checkEmail("logEmail"); });
+    document.getElementById("logPass").addEventListener("input", checkLoginPass);
+
+    // ---- Check everything when the form is submitted ----
+    document.getElementById("regForm").addEventListener("submit", function (e) {
+      e.preventDefault();      // stop the page from reloading
+      var valid = checkName() & checkEmail("regEmail") & checkPassword() & checkConfirm();
+      document.getElementById("regMsg").innerText = valid ? "Registration successful!" : "";
+    });
+
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var valid = checkEmail("logEmail") & checkLoginPass();
+      document.getElementById("logMsg").innerText = valid ? "Login successful!" : "";
+    });
+  </script>
+
+</body>
+</html>

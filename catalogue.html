@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Catalogue</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+    }
+
+    h1 {
+      background: #1f2937;
+      color: white;
+      margin: 0;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .controls {
+      text-align: center;
+      margin: 20px;
+    }
+
+    input,
+    select {
+      padding: 8px;
+      font-size: 15px;
+      margin: 4px;
+    }
+
+    input {
+      width: 220px;
+    }
+
+    .products {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      padding: 10px;
+    }
+
+    .card {
+      background: white;
+      width: 220px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .2);
+      overflow: hidden;
+    }
+
+    .card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+    }
+
+    .card div {
+      padding: 10px;
+    }
+
+    .card h3 {
+      margin: 0 0 6px;
+      font-size: 16px;
+    }
+
+    .price {
+      color: #b12704;
+      font-weight: bold;
+    }
+
+    .category {
+      color: #555;
+      font-size: 14px;
+    }
+
+    #empty {
+      text-align: center;
+      color: #888;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Product Catalogue</h1>
+
+  <div class="controls">
+    <input type="text" id="search" placeholder="Search products...">
+    <select id="category">
+      <option value="All">All Categories</option>
+      <option value="Electronics">Electronics</option>
+      <option value="Books">Books</option>
+      <option value="Fashion">Fashion</option>
+      <option value="Home">Home</option>
+    </select>
+  </div>
+
+  <div class="products" id="products"></div>
+  <p id="empty"></p>
+
+  <script>
+    // Product data (sample details - replace image links with your own if needed)
+    var products = [
+      { name: "Wireless Earbuds", price: 1499, category: "Electronics", image: "https://m.media-amazon.com/images/I/61hf2tu4IvL.jpg" },
+      { name: "Smart Watch", price: 2999, category: "Electronics", image: "https://www.penguin.com.bd/wp-content/uploads/2022/10/dt8ultra-03-1.png" },
+      { name: "Bluetooth Speaker", price: 1999, category: "Electronics", image: "https://m.media-amazon.com/images/I/811rWDv3zbL.jpg" },
+      { name: "Python Programming Book", price: 450, category: "Books", image: "https://1.bp.blogspot.com/-_gie8qAwZPY/X0HgTfDEoMI/AAAAAAAAIjk/KsZvNYbtGHU6Dq9wi7koZ-QYfSLa8MgYwCLcBGAsYHQ/s1600/touchmaster_1598152338675.jpeg" },
+      { name: "Atomic Habits", price: 399, category: "Books", image: "https://miro.medium.com/v2/resize:fit:1200/1*bAR_NUW86Wv_xCd973ljAw.jpeg" },
+      { name: "Cotton T-Shirt", price: 499, category: "Fashion", image: "https://i5.walmartimages.com/seo/Hanes-Originals-Men-s-T-Shirts-Pack-Moisture-Wicking-Stretch-Cotton-3-Pack_40988966-edf8-4164-94cd-842372f76ee8.276a89e28e13e6c0f5504b77166c86e4.jpeg" },
+      { name: "Running Shoes", price: 1799, category: "Fashion", image: "https://assets.adidas.com/images/w_1880,f_auto,q_auto/1b328e4fbf104cafb6ebfd0dad032090_9366/ID1565_HM3_hover.jpg" },
+      { name: "Table Lamp", price: 649, category: "Home", image: "https://m.media-amazon.com/images/I/710mJWK3xzL._AC_SL1500_.jpg" },
+      { name: "Water Bottle", price: 299, category: "Home", image: "https://m.media-amazon.com/images/I/614sXIjZB9L.jpg" }
+    ];
+
+    var searchBox = document.getElementById("search");
+    var categoryBox = document.getElementById("category");
+    var list = document.getElementById("products");
+
+    // Show products that match the search text and the selected category
+    function showProducts() {
+      var text = searchBox.value.toLowerCase();
+      var cat = categoryBox.value;
+      var html = "";
+      var count = 0;
+
+      for (var i = 0; i < products.length; i++) {
+        var p = products[i];
+        var nameMatch = p.name.toLowerCase().includes(text);
+        var catMatch = (cat === "All" || p.category === cat);
+
+        if (nameMatch && catMatch) {
+          html += '<div class="card">' +
+            '<img src="' + p.image + '" alt="' + p.name + '">' +
+            '<div><h3>' + p.name + '</h3>' +
+            '<span class="price">&#8377;' + p.price + '</span><br>' +
+            '<span class="category">' + p.category + '</span></div>' +
+            '</div>';
+          count++;
+        }
+      }
+
+      list.innerHTML = html;
+      document.getElementById("empty").innerText = (count === 0) ? "No products found." : "";
+    }
+
+    // Update the list whenever the user types or changes the category
+    searchBox.addEventListener("input", showProducts);
+    categoryBox.addEventListener("change", showProducts);
+
+    showProducts();
+  </script>
+
+</body>
+
+</html>

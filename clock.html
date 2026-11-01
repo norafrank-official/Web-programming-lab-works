@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital Clock & Calendar</title>
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; background: #f4f6f8; text-align: center; }
+    h1 { background: #1f2937; color: white; margin: 0; padding: 15px; }
+    #time { font-size: 60px; font-weight: bold; color: #2563eb; margin-top: 30px; }
+    #date { font-size: 20px; margin-bottom: 25px; }
+
+    table { margin: 0 auto; border-collapse: collapse; background: white; box-shadow: 0 2px 6px rgba(0,0,0,.2); }
+    th, td { width: 45px; height: 40px; border: 1px solid #ddd; }
+    th { background: #2563eb; color: white; }
+    .today { background: #dc2626; color: white; font-weight: bold; }   /* highlight today */
+  </style>
+</head>
+<body>
+
+  <h1>Digital Clock &amp; Calendar</h1>
+
+  <div id="time"></div>
+  <div id="date"></div>
+
+  <h2 id="monthName"></h2>
+  <table id="calendar"></table>
+
+  <script>
+    var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    var months = ["January", "February", "March", "April", "May", "June",
+                  "July", "August", "September", "October", "November", "December"];
+
+    // Show the current time, day and date
+    function showClock() {
+      var now = new Date();
+      document.getElementById("time").innerText = now.toLocaleTimeString();
+      document.getElementById("date").innerText =
+        days[now.getDay()] + ", " + now.getDate() + " " + months[now.getMonth()] + " " + now.getFullYear();
+    }
+
+    // Build the calendar for the current month
+    function showCalendar() {
+      var now = new Date();
+      var year = now.getFullYear();
+      var month = now.getMonth();
+      var firstDay = new Date(year, month, 1).getDay();          // weekday the month starts on
+      var totalDays = new Date(year, month + 1, 0).getDate();    // number of days in the month
+
+      document.getElementById("monthName").innerText = months[month] + " " + year;
+
+      // Header row with short day names
+      var html = "<tr>";
+      for (var d = 0; d < 7; d++) {
+        html += "<th>" + days[d].substring(0, 3) + "</th>";
+      }
+      html += "</tr><tr>";
+
+      // Empty cells before the 1st of the month
+      for (var i = 0; i < firstDay; i++) {
+        html += "<td></td>";
+      }
+
+      // Date cells
+      for (var date = 1; date <= totalDays; date++) {
+        var cls = (date === now.getDate()) ? ' class="today"' : "";
+        html += "<td" + cls + ">" + date + "</td>";
+        if ((firstDay + date) % 7 === 0 && date !== totalDays) {
+          html += "</tr><tr>";    // start a new row after Saturday
+        }
+      }
+      html += "</tr>";
+
+      document.getElementById("calendar").innerHTML = html;
+    }
+
+    showClock();
+    showCalendar();
+    setInterval(showClock, 1000);    // update the clock every 1 second
+  </script>
+
+</body>
+</html>

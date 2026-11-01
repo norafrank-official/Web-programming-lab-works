@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Gallery</title>
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; background: #f4f6f8; text-align: center; }
+    h1 { background: #1f2937; color: white; margin: 0; padding: 15px; }
+    h2 { margin-top: 30px; }
+
+    /* Slideshow */
+    .slideshow { max-width: 600px; margin: 20px auto; }
+    #slide { width: 100%; height: 380px; object-fit: cover; border-radius: 8px; }
+    button { background: #2563eb; color: white; border: none; padding: 8px 16px; margin: 8px 4px; border-radius: 5px; cursor: pointer; font-size: 15px; }
+    button:hover { background: #1d4ed8; }
+
+    /* Grid */
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; max-width: 900px; margin: 20px auto; padding: 0 15px; }
+    .box { overflow: hidden; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,.2); transition: box-shadow .3s; }
+    .box img { width: 100%; height: 160px; object-fit: cover; display: block; transition: transform .4s; cursor: pointer; }
+    .box:hover { box-shadow: 0 8px 20px rgba(0,0,0,.5); }   /* shadow effect */
+    .box:hover img { transform: scale(1.2); }                /* zoom effect */
+  </style>
+</head>
+<body>
+
+  <h1>My Image Gallery</h1>
+
+  <!-- Slideshow -->
+  <div class="slideshow">
+    <img id="slide" src="" alt="Slideshow image">
+    <p id="count"></p>
+    <button onclick="prev()">&#10094; Previous</button>
+    <button id="playBtn" onclick="toggleAuto()">Auto-play: OFF</button>
+    <button onclick="next()">Next &#10095;</button>
+  </div>
+
+  <!-- Grid -->
+  <h2>All Photos (click to view in slideshow)</h2>
+  <div class="grid" id="grid"></div>
+
+  <script>
+    // Image list (from the Flickr photostream)
+    var images = [
+      "https://live.staticflickr.com/3664/3482879724_0372a94dc5_z.jpg",
+      "https://live.staticflickr.com/3318/3482878736_42fc8c065d_z.jpg",
+      "https://live.staticflickr.com/3559/3377694323_3c323d9433_z.jpg",
+      "https://live.staticflickr.com/3568/3377694319_8be2f38226_z.jpg",
+      "https://live.staticflickr.com/3424/3377694315_2e1fcd51fd_z.jpg",
+      "https://live.staticflickr.com/3036/3377694311_cf58529dcf_z.jpg",
+      "https://live.staticflickr.com/3548/3377694305_d9300c4500_z.jpg",
+      "https://live.staticflickr.com/3634/3377688169_5562287f6a_z.jpg"
+    ];
+
+    var index = 0;       // current image number
+    var timer = null;    // holds the auto-play timer
+
+    // Show the image at the current index
+    function show() {
+      document.getElementById("slide").src = images[index];
+      document.getElementById("count").innerText = (index + 1) + " / " + images.length;
+    }
+
+    function next() { index = (index + 1) % images.length; show(); }
+    function prev() { index = (index - 1 + images.length) % images.length; show(); }
+
+    // Turn auto-play on or off
+    function toggleAuto() {
+      var btn = document.getElementById("playBtn");
+      if (timer === null) {
+        timer = setInterval(next, 2000);   // change image every 2 seconds
+        btn.innerText = "Auto-play: ON";
+      } else {
+        clearInterval(timer);
+        timer = null;
+        btn.innerText = "Auto-play: OFF";
+      }
+    }
+
+    // Build the grid using a loop
+    var grid = document.getElementById("grid");
+    for (var i = 0; i < images.length; i++) {
+      var box = document.createElement("div");
+      box.className = "box";
+      box.innerHTML = '<img src="' + images[i] + '" onclick="index=' + i + '; show();">';
+      grid.appendChild(box);
+    }
+
+    show();
+  </script>
+
+</body>
+</html>
